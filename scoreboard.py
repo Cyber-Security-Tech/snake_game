@@ -1,12 +1,24 @@
+"""
+scoreboard.py – Defines the Scoreboard class for SNAKE.EXE.
+
+Handles score tracking, display, special mode status, and game-over UI.
+Persists the high score in a local text file between sessions.
+"""
+
 from turtle import Turtle
 import time
 from playsound import playsound
 
+# === Constants ===
 ALIGNMENT = "center"
 FONT = ("Courier", 24, "bold")
 
+# === Scoreboard Class ===
 class Scoreboard(Turtle):
     def __init__(self, color="deeppink"):
+        """
+        Initializes the scoreboard with starting score, high score, and visual setup.
+        """
         super().__init__()
         self.score = 0
         self.double_points = False
@@ -15,7 +27,7 @@ class Scoreboard(Turtle):
         self.hideturtle()
         self.goto(0, 240)
 
-        # Load high score from file
+        # Load high score from file or initialize to 0
         try:
             with open("high_score.txt") as file:
                 self.high_score = int(file.read())
@@ -24,8 +36,9 @@ class Scoreboard(Turtle):
 
         self.update_score()
 
+    # === Score Display ===
     def update_score(self):
-        """Display current score and high score."""
+        """Update the scoreboard display with the current score and high score."""
         self.clear()
         self.goto(0, 240)
         self.write(
@@ -35,20 +48,21 @@ class Scoreboard(Turtle):
         )
 
     def increase_score(self):
-        """Increase score depending on special mode."""
+        """Increases the score by 1 or 2 depending on special mode."""
         self.score += 2 if self.double_points else 1
         self.update_score()
 
+    # === Special Mode Handling ===
     def activate_double_points(self):
-        """Activate special mode (double points)."""
+        """Enable double points during special mode."""
         self.double_points = True
 
     def deactivate_double_points(self):
-        """End special mode."""
+        """Disable double points when special mode ends."""
         self.double_points = False
 
     def show_special_mode(self, seconds_left):
-        """Show special mode countdown."""
+        """Display special mode countdown in gold text."""
         self.goto(0, 210)
         self.color("gold")
         self.write(
@@ -58,8 +72,9 @@ class Scoreboard(Turtle):
         )
         self.color("deeppink")
 
+    # === Game Over + High Score ===
     def show_new_high_score(self):
-        """Flash NEW HIGH SCORE! if player sets a new record."""
+        """Flash a celebratory message when a new high score is achieved."""
         playsound("sounds/new_high_score.wav", block=False)
         flash = Turtle()
         flash.hideturtle()
@@ -78,7 +93,10 @@ class Scoreboard(Turtle):
         flash.write("🌟 NEW HIGH SCORE! 🌟", align=ALIGNMENT, font=("Courier", 22, "bold"))
 
     def game_over(self):
-        """Handle game over display and check for new high score."""
+        """
+        Display 'Game Over' and update high score file if necessary.
+        Also triggers new high score animation if applicable.
+        """
         if self.score > self.high_score:
             self.high_score = self.score
             with open("high_score.txt", "w") as file:
