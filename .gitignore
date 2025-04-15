@@ -9,3 +9,6 @@ Thumbs.db
 # Environment files
 venv/
 .env
+
+# Game runtime data
+high_score.txt
